@@ -15,31 +15,20 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SimpleClient extends AbstractVerticle {
 
     public static final Logger logger = LoggerFactory.getLogger(SimpleClient.class.getSimpleName());
     public static final String HEALTH_CHANNEL_PREFIX = "health-node-";
-    private String[] channelNames;
+    private List channelNames;
 
-    public SimpleClient(String[] channelNames) {
-        this.channelNames = channelNames;
-    }
 
     @Override
     public void start() throws Exception {
         Router router = Router.router(vertx);
 
-//        BridgeOptions opts = new BridgeOptions()
-//                .addOutboundPermitted(new PermittedOptions().setAddress(
-//                        String.format("stuff-channel-%s", 1)))
-//                .addOutboundPermitted(new PermittedOptions().setAddress(
-//                        String.format("stuff-channel-%s", 3)))
-//                .addOutboundPermitted(new PermittedOptions().setAddress(
-//                        String.format("stuff-channel-%s", 5)))
-//                .addInboundPermitted(new PermittedOptions().setAddress("block-operation-channel"))
-//                .addOutboundPermitted(new PermittedOptions().setAddress("vertx-health"));
 
         BridgeOptions opts = new BridgeOptions()
                 .addOutboundPermitted(new PermittedOptions().setAddressRegex(".*"))
@@ -52,24 +41,13 @@ public class SimpleClient extends AbstractVerticle {
         EventBus eb = vertx.eventBus();
         vertx.createHttpServer().requestHandler(router::accept).listen(8082);
 
-//        final AtomicInteger count = new AtomicInteger();
+        channelNames = config().getJsonArray("monitorChannels").getList();
 
-//        eb.consumer("wrapper", channel -> {
-//            logger.info("Send event to process block operation " + count.get());
-//            eb.send("block-operation-channel", new JsonObject().put("count", count.incrementAndGet()), healthHandler -> {
-//                logger.info("I have received reply from blocked operation: " + healthHandler.result().body());
-//            });
-//        });
-//
-//
-//        vertx.setPeriodic(10000, event1 -> {
-//            logger.info("TIMER: " + count.get());
-//            eb.send("wrapper", "go");
-//        });
+        logger.info("Found channel to monitoring " + channelNames);
 
         vertx.setPeriodic(2000, event -> {
-            for (int i = 0; i< channelNames.length ;i++) {
-                final String channelName = channelNames[i];
+            for (int i = 0; i< channelNames.size() ;i++) {
+                final String channelName = channelNames.get(i).toString();
                 logger.info("Send health event to " + HEALTH_CHANNEL_PREFIX + channelName);
                 eb.<JsonObject>send(HEALTH_CHANNEL_PREFIX + channelName, "check", healthHandler -> {
                     JsonObject health = new JsonObject();
@@ -101,15 +79,6 @@ public class SimpleClient extends AbstractVerticle {
             } else {
                 health.put("status", "success");
             }
-            health.put("clusterhost", result.getJsonObject("vertx.cluster-host").getString("value"));
-
-            health.put("received",
-                    result.getJsonObject("vertx.eventbus.messages.received").getLong("count"));
-            health.put("delivered",
-                    result.getJsonObject("vertx.eventbus.messages.delivered").getLong("count"));
-            health.put("verticles",
-                    result.getJsonObject("vertx.verticles").getInteger("count"));
-
         }
 
         vertx.eventBus().publish("vertx-health", health);

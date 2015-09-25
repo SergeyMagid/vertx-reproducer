@@ -10,7 +10,7 @@ Steps.
  2. Run two nodes of  simple-spring-boot-node : <br>
   <b>cd simple-spring-boot-node/</b><br>
   <b>java -jar target/vertx-spring-boot-service-1.0NAPSHOT-fat.jar -cluster -conf channel1.conf</b> <br>
-  <b>java -jar target/vertx-spring-boot-service-1.0NAPSHOT-fat.jar -cluster -conf channel1.conf</b>
+  <b>java -jar target/vertx-spring-boot-service-1.0NAPSHOT-fat.jar -cluster -conf channel2.conf</b>
  3. Run one monitoring <br>
   <b>cd monitoring/</b><br>
   <b>java -jar java -jar target/monitoring-1.0-SNAPSHOT-fat.jar -cluster -conf monitoring.conf</b>

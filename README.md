@@ -1,7 +1,7 @@
 # vertx-reproducer
 
 It`s a two simple applications for help to reproduce bug. <br>
-<b>simple-spring-boot-node</b> - genarate random data and published, also hase handler for check is node still live<br>
+<b>simple-spring-boot-node</b> - has handler for make response to check is node still live<br>
 <b>monitoring</b> - contains periodic timer which sends every 2 sec event to check is node still live. 
 and simple html page for help monitoring status at port 8082<br><br>
 

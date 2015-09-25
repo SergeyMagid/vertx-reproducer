@@ -8,10 +8,12 @@ and simple html page for help monitoring status at port 8082<br><br>
 Steps.
  1. Build all mvn clean install.
  2. Run two nodes of  simple-spring-boot-node : <br>
-  <b>java -jar java -jar target/vertx-spring-boot-service-1.0-SNAPSHOT.jar channel_1</b> <br>
-  <b>java -jar java -jar target/vertx-spring-boot-service-1.0-SNAPSHOT.jar channel_2</b>
+  <b>cd simple-spring-boot-node/</b><br>
+  <b>java -jar target/vertx-spring-boot-service-1.0NAPSHOT-fat.jar -cluster -conf channel1.conf</b> <br>
+  <b>java -jar target/vertx-spring-boot-service-1.0NAPSHOT-fat.jar -cluster -conf channel1.conf</b>
  3. Run one monitoring <br>
-  <b>java -jar target/monitoring-1.0-SNAPSHOT.jar channel_2 channel_1</b>
+  <b>cd monitoring/</b><br>
+  <b>java -jar java -jar target/monitoring-1.0-SNAPSHOT-fat.jar -cluster -conf monitoring.conf</b>
 
 You can check simple html page at localhost: 8082. Where you can see some stuff received from simple-spring-boot-node
 and see simple table with last node status. 
